@@ -24,6 +24,7 @@ public class HotelBusinessRules : BaseBusinessRules
         throw new BusinessException(message);
     }
 
+    // 1. Otel Varlýk Kontrolü
     public async Task HotelShouldExistWhenSelected(Hotel? hotel)
     {
         if (hotel == null)
@@ -38,5 +39,27 @@ public class HotelBusinessRules : BaseBusinessRules
             cancellationToken: cancellationToken
         );
         await HotelShouldExistWhenSelected(hotel);
+    }
+
+    // 2. Ýsim Benzersizliði (Create Ýçin)
+    public async Task HotelNameShouldNotExistsWhenInsert(string name, CancellationToken cancellationToken)
+    {
+        bool doesExist = await _hotelRepository.AnyAsync(
+            predicate: h => h.Name == name,
+            cancellationToken: cancellationToken
+        );
+        if (doesExist)
+            await throwBusinessException(HotelsBusinessMessages.HotelNameAlreadyExists);
+    }
+
+    // 3. Ýsim Benzersizliði (Update Ýçin - Kendi adý hariç)
+    public async Task HotelNameShouldNotExistsWhenUpdate(Guid id, string name, CancellationToken cancellationToken)
+    {
+        bool doesExist = await _hotelRepository.AnyAsync(
+            predicate: h => h.Id != id && h.Name == name,
+            cancellationToken: cancellationToken
+        );
+        if (doesExist)
+            await throwBusinessException(HotelsBusinessMessages.HotelNameAlreadyExists);
     }
 }

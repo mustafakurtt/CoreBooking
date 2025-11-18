@@ -1,4 +1,4 @@
-using Application.Features.Hotels.Constants;
+﻿using Application.Features.Hotels.Constants;
 using Application.Services.Repositories;
 using AutoMapper;
 using Domain.Entities;
@@ -14,18 +14,12 @@ using NArchitecture.Core.Persistence.Paging;
 
 namespace Application.Features.Hotels.Queries.GetListByDynamic;
 
-public class GetListByDynamicHotelQuery : IRequest<GetListResponse<GetListByDynamicHotelListItemDto>>, ICachableRequest, ILoggableRequest, ISecuredRequest
+public class GetListByDynamicHotelQuery : IRequest<GetListResponse<GetListByDynamicHotelListItemDto>>, ISecuredRequest, ILoggableRequest
 {
     public PageRequest PageRequest { get; set; }
     public DynamicQuery Dynamic { get; set; }
 
-    public string[] Roles => new[] { HotelsOperationClaims.Admin, HotelsOperationClaims.Read };
-        
-    public bool BypassCache { get; }
-        public string CacheKey => $"GetListByDynamicHotel-{PageRequest.PageIndex}-{PageRequest.PageSize}";
-        public string CacheGroupKey => "GetHotels";
-        public TimeSpan? SlidingExpiration { get; }
-        
+    public string[] Roles => [HotelsOperationClaims.Admin, HotelsOperationClaims.Read];
 
     public class GetListByDynamicHotelQueryHandler : IRequestHandler<GetListByDynamicHotelQuery, GetListResponse<GetListByDynamicHotelListItemDto>>
     {
@@ -44,6 +38,10 @@ public class GetListByDynamicHotelQuery : IRequest<GetListResponse<GetListByDyna
                 dynamic: request.Dynamic,
                 index: request.PageRequest.PageIndex,
                 size: request.PageRequest.PageSize,
+
+                // 🌟 İLİŞKİLERİ DAHİL ET (RoomTypeCount için gerekli)
+                include: h => h.Include(x => x.RoomTypes),
+
                 cancellationToken: cancellationToken
             );
 

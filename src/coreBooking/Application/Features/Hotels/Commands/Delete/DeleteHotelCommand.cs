@@ -19,6 +19,7 @@ public class DeleteHotelCommand : IRequest<DeletedHotelResponse>, ISecuredReques
 
     public string[] Roles => [Admin, Write, HotelsOperationClaims.Delete];
 
+    // Cache temizleme ayarlarý
     public bool BypassCache { get; }
     public string? CacheKey { get; }
     public string[]? CacheGroupKey => ["GetHotels"];
@@ -30,7 +31,7 @@ public class DeleteHotelCommand : IRequest<DeletedHotelResponse>, ISecuredReques
         private readonly HotelBusinessRules _hotelBusinessRules;
 
         public DeleteHotelCommandHandler(IMapper mapper, IHotelRepository hotelRepository,
-                                         HotelBusinessRules hotelBusinessRules)
+            HotelBusinessRules hotelBusinessRules)
         {
             _mapper = mapper;
             _hotelRepository = hotelRepository;
@@ -39,11 +40,16 @@ public class DeleteHotelCommand : IRequest<DeletedHotelResponse>, ISecuredReques
 
         public async Task<DeletedHotelResponse> Handle(DeleteHotelCommand request, CancellationToken cancellationToken)
         {
-            Hotel? hotel = await _hotelRepository.GetAsync(predicate: h => h.Id == request.Id, cancellationToken: cancellationToken);
+            Hotel? hotel = await _hotelRepository.GetAsync(
+                predicate: h => h.Id == request.Id,
+                cancellationToken: cancellationToken
+            );
+
             await _hotelBusinessRules.HotelShouldExistWhenSelected(hotel);
 
             await _hotelRepository.DeleteAsync(hotel!);
 
+            // 4. Response
             DeletedHotelResponse response = _mapper.Map<DeletedHotelResponse>(hotel);
             return response;
         }

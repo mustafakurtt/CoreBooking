@@ -16,10 +16,8 @@ namespace Application.Features.Hotels.Commands.Create;
 public class CreateHotelCommand : IRequest<CreatedHotelResponse>, ISecuredRequest, ICacheRemoverRequest, ILoggableRequest, ITransactionalRequest
 {
     public required string Name { get; set; }
-    public required string City { get; set; } // Otelin bulunduðu ana þehir
+    public required string City { get; set; }
 
-    // --- V2 GÜNCELLEMESÝ: Adres Parçalarý ---
-    // Artýk tek bir "Address" string'i yerine detaylý bilgi alýyoruz.
     public required string AddressStreet { get; set; }
     public required string AddressCity { get; set; }
     public required string AddressCountry { get; set; }
@@ -47,7 +45,8 @@ public class CreateHotelCommand : IRequest<CreatedHotelResponse>, ISecuredReques
 
         public async Task<CreatedHotelResponse> Handle(CreateHotelCommand request, CancellationToken cancellationToken)
         {
-            // 1. Önce Value Object'i oluþturuyoruz (Validasyonlar Address constructor'ýnda çalýþýr)
+            await _hotelBusinessRules.HotelNameShouldNotExistsWhenInsert(request.Name, cancellationToken);
+
             Address address = new(
                 request.AddressStreet,
                 request.AddressCity,
@@ -55,21 +54,16 @@ public class CreateHotelCommand : IRequest<CreatedHotelResponse>, ISecuredReques
                 request.AddressZipCode
             );
 
-            // 2. Hotel Entity'sini oluþturuyoruz
-            // AutoMapper kullanmak yerine manuel oluþturuyoruz çünkü input alanlarýmýz (AddressStreet vs.)
-            // ile Entity alanýmýz (Address objesi) birebir eþleþmiyor.
             Hotel hotel = new()
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 City = request.City,
-                Address = address // Oluþturduðumuz nesneyi atýyoruz
+                Address = address
             };
 
-            // 3. Kayýt (Repo)
             await _hotelRepository.AddAsync(hotel);
 
-            // 4. Response Dönüþü
             CreatedHotelResponse response = _mapper.Map<CreatedHotelResponse>(hotel);
             return response;
         }
