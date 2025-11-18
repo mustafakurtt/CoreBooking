@@ -30,7 +30,14 @@ public class GetByIdPaymentQuery : IRequest<GetByIdPaymentResponse>, ISecuredReq
 
         public async Task<GetByIdPaymentResponse> Handle(GetByIdPaymentQuery request, CancellationToken cancellationToken)
         {
-            Payment? payment = await _paymentRepository.GetAsync(predicate: p => p.Id == request.Id, cancellationToken: cancellationToken);
+            // Repository altyapýmýz "Include" desteði sunar.
+            // Ýleride Booking veya User bilgilerini de çekmek isterseniz buraya .Include() ekleyebilirsiniz.
+            Payment? payment = await _paymentRepository.GetAsync(
+                predicate: p => p.Id == request.Id,
+                // include: p => p.Include(x => x.Booking), // Örnek Include kullanýmý
+                cancellationToken: cancellationToken
+            );
+
             await _paymentBusinessRules.PaymentShouldExistWhenSelected(payment);
 
             GetByIdPaymentResponse response = _mapper.Map<GetByIdPaymentResponse>(payment);

@@ -32,7 +32,7 @@ public class GetListPaymentQuery : IRequest<GetListResponse<GetListPaymentListIt
         {
             IPaginate<Payment> payments = await _paymentRepository.GetListAsync(
                 index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize, 
+                size: request.PageRequest.PageSize,
                 cancellationToken: cancellationToken
             );
 

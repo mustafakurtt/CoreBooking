@@ -36,5 +36,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.AmountValue, opt => opt.MapFrom(src => src.Amount.Amount))
             .ForMember(dest => dest.AmountCurrency, opt => opt.MapFrom(src => src.Amount.Currency));
 
+
+
     }
 }

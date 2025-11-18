@@ -34,11 +34,19 @@ public class DeleteGuestCommand : IRequest<DeletedGuestResponse>, ISecuredReques
 
         public async Task<DeletedGuestResponse> Handle(DeleteGuestCommand request, CancellationToken cancellationToken)
         {
-            Guest? guest = await _guestRepository.GetAsync(predicate: g => g.Id == request.Id, cancellationToken: cancellationToken);
+            Guest? guest = await _guestRepository.GetAsync(
+                predicate: g => g.Id == request.Id, 
+                cancellationToken: cancellationToken
+            );
+            
             await _guestBusinessRules.GuestShouldExistWhenSelected(guest);
 
+            await _guestBusinessRules.BookingShouldBeActive(guest!.BookingId, cancellationToken);
+
+            // 4. Sil
             await _guestRepository.DeleteAsync(guest!);
 
+            // 5. Response
             DeletedGuestResponse response = _mapper.Map<DeletedGuestResponse>(guest);
             return response;
         }

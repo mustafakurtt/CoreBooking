@@ -5,4 +5,5 @@ namespace Application.Services.Repositories;
 
 public interface IGuestRepository : IAsyncRepository<Guest, Guid>, IRepository<Guest, Guid>
 {
+    Task<int> GetGuestCountByBookingIdAsync(Guid bookingId, CancellationToken cancellationToken);
 }

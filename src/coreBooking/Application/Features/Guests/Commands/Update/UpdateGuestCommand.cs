@@ -39,12 +39,27 @@ public class UpdateGuestCommand : IRequest<UpdatedGuestResponse>, ISecuredReques
 
         public async Task<UpdatedGuestResponse> Handle(UpdateGuestCommand request, CancellationToken cancellationToken)
         {
-            Guest? guest = await _guestRepository.GetAsync(predicate: g => g.Id == request.Id, cancellationToken: cancellationToken);
-            await _guestBusinessRules.GuestShouldExistWhenSelected(guest);
-            guest = _mapper.Map(request, guest);
+            // 1. Misafiri Getir
+            Guest? guest = await _guestRepository.GetAsync(
+                predicate: g => g.Id == request.Id,
+                cancellationToken: cancellationToken
+            );
 
+            // 2. Temel Kontrol: Misafir var mý?
+            await _guestBusinessRules.GuestShouldExistWhenSelected(guest);
+
+            // 3. Ýliþki Kontrolü: Booking var mý?
+            await _guestBusinessRules.BookingIdShouldExist(request.BookingId, cancellationToken);
+
+            // 4. Kritik Kural: Rezervasyon Aktif mi?
+            // (Geçmiþ veya iptal edilmiþ rezervasyonun misafiri deðiþtirilemez)
+            await _guestBusinessRules.BookingShouldBeActive(request.BookingId, cancellationToken);
+
+            // 5. Mapping ve Güncelleme
+            _mapper.Map(request, guest);
             await _guestRepository.UpdateAsync(guest!);
 
+            // 6. Response
             UpdatedGuestResponse response = _mapper.Map<UpdatedGuestResponse>(guest);
             return response;
         }

@@ -38,10 +38,22 @@ public class CreateGuestCommand : IRequest<CreatedGuestResponse>, ISecuredReques
 
         public async Task<CreatedGuestResponse> Handle(CreateGuestCommand request, CancellationToken cancellationToken)
         {
-            Guest guest = _mapper.Map<Guest>(request);
+            // 1. ÝÞ KURALLARI (Business Rules)
 
+            // Kural: Rezervasyon var mý?
+            await _guestBusinessRules.BookingIdShouldExist(request.BookingId, cancellationToken);
+
+            // Kural: Rezervasyon aktif mi? (Ýptal edilmiþse veya tarihi geçmiþse misafir eklenemez)
+            await _guestBusinessRules.BookingShouldBeActive(request.BookingId, cancellationToken);
+
+            // Kural: Kapasite dolu mu? (Performanslý Count metodu burada çalýþacak)
+            await _guestBusinessRules.BookingCapacityShouldNotBeExceeded(request.BookingId, cancellationToken);
+
+            // 2. MAPPING VE KAYIT
+            Guest guest = _mapper.Map<Guest>(request);
             await _guestRepository.AddAsync(guest);
 
+            // 3. RESPONSE
             CreatedGuestResponse response = _mapper.Map<CreatedGuestResponse>(guest);
             return response;
         }

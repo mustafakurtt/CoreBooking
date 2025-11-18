@@ -19,9 +19,7 @@ public class GetListByDynamicPaymentQuery : IRequest<GetListResponse<GetListByDy
     public PageRequest PageRequest { get; set; }
     public DynamicQuery Dynamic { get; set; }
 
-    public string[] Roles => new[] { PaymentsOperationClaims.Admin, PaymentsOperationClaims.Read };
-        
-    
+    public string[] Roles => [PaymentsOperationClaims.Admin, PaymentsOperationClaims.Read];
 
     public class GetListByDynamicPaymentQueryHandler : IRequestHandler<GetListByDynamicPaymentQuery, GetListResponse<GetListByDynamicPaymentListItemDto>>
     {
