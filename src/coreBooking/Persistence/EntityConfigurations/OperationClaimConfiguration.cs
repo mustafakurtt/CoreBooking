@@ -6,6 +6,14 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NArchitecture.Core.Security.Constants;
+using Application.Features.Hotels.Constants;
+using Application.Features.RoomTypes.Constants;
+using Application.Features.Inventories.Constants;
+using Application.Features.Bookings.Constants;
+
+
+
+
 
 namespace Persistence.EntityConfigurations;
 
@@ -97,6 +105,70 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
         );
         #endregion
 
+        
+        #region Hotels CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "Hotels.Admin" },
+                new() { Id = ++lastId, Name = "Hotels.Read" },
+                new() { Id = ++lastId, Name = "Hotels.Write" },
+                
+                new() { Id = ++lastId, Name = "Hotels.Create" },
+                new() { Id = ++lastId, Name = "Hotels.Update" },
+                new() { Id = ++lastId, Name = "Hotels.Delete" },
+            ]
+        );
+        #endregion
+        
+        
+        #region RoomTypes CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "RoomTypes.Admin" },
+                new() { Id = ++lastId, Name = "RoomTypes.Read" },
+                new() { Id = ++lastId, Name = "RoomTypes.Write" },
+                
+                new() { Id = ++lastId, Name = "RoomTypes.Create" },
+                new() { Id = ++lastId, Name = "RoomTypes.Update" },
+                new() { Id = ++lastId, Name = "RoomTypes.Delete" },
+            ]
+        );
+        #endregion
+        
+        
+        #region Inventories CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "Inventories.Admin" },
+                new() { Id = ++lastId, Name = "Inventories.Read" },
+                new() { Id = ++lastId, Name = "Inventories.Write" },
+                
+                new() { Id = ++lastId, Name = "Inventories.Create" },
+                new() { Id = ++lastId, Name = "Inventories.Update" },
+                new() { Id = ++lastId, Name = "Inventories.Delete" },
+            ]
+        );
+        #endregion
+        
+        
+        #region Bookings CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "Bookings.Admin" },
+                new() { Id = ++lastId, Name = "Bookings.Read" },
+                new() { Id = ++lastId, Name = "Bookings.Write" },
+                
+                new() { Id = ++lastId, Name = "Bookings.Create" },
+                new() { Id = ++lastId, Name = "Bookings.Update" },
+                new() { Id = ++lastId, Name = "Bookings.Delete" },
+            ]
+        );
+        #endregion
+        
         return featureOperationClaims;
     }
 #pragma warning restore S1854 // Unused assignments should be removed

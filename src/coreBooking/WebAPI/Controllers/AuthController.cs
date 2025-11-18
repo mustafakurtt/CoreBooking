@@ -7,6 +7,7 @@ using Application.Features.Auth.Commands.RevokeToken;
 using Application.Features.Auth.Commands.VerifyEmailAuthenticator;
 using Application.Features.Auth.Commands.VerifyOtpAuthenticator;
 using Domain.Entities;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NArchitecture.Core.Application.Dtos;
@@ -28,8 +29,16 @@ public class AuthController : BaseController
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest) // <-- UserForLoginDto yerine kendi DTO'muz
     {
+        // 1. Gelen veriyi, sistemin beklediği UserForLoginDto'ya manuel çeviriyoruz
+        UserForLoginDto userForLoginDto = new()
+        {
+            Email = loginRequest.Email,
+            Password = loginRequest.Password
+        };
+
+        // 2. Geri kalan kod aynı
         LoginCommand loginCommand = new() { UserForLoginDto = userForLoginDto, IpAddress = getIpAddress() };
         LoggedResponse result = await Mediator.Send(loginCommand);
 
@@ -40,11 +49,21 @@ public class AuthController : BaseController
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest) // <-- Kendi DTO'muz
     {
+        // 1. Manuel Dönüşüm
+        UserForRegisterDto userForRegisterDto = new()
+        {
+            Email = registerRequest.Email,
+            Password = registerRequest.Password
+        };
+
+        // 2. Geri kalan kod aynı
         RegisterCommand registerCommand = new() { UserForRegisterDto = userForRegisterDto, IpAddress = getIpAddress() };
         RegisteredResponse result = await Mediator.Send(registerCommand);
+
         setRefreshTokenToCookie(result.RefreshToken);
+
         return Created(uri: "", result.AccessToken);
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Application.Services.AuthenticatorService;
 using Application.Services.AuthService;
 using Application.Services.UsersService;
@@ -20,6 +20,10 @@ using NArchitecture.Core.Mailing;
 using NArchitecture.Core.Mailing.MailKit;
 using NArchitecture.Core.Security.DependencyInjection;
 using NArchitecture.Core.Security.JWT;
+using Application.Services.Hotels;
+using Application.Services.RoomTypes;
+using Application.Services.Inventories;
+using Application.Services.Bookings;
 
 namespace Application;
 
@@ -61,6 +65,10 @@ public static class ApplicationServiceRegistration
 
         services.AddSecurityServices<Guid, int, Guid>(tokenOptions);
 
+        services.AddScoped<IHotelService, HotelManager>();
+        services.AddScoped<IRoomTypeService, RoomTypeManager>();
+        services.AddScoped<IInventoryService, InventoryManager>();
+        services.AddScoped<IBookingService, BookingManager>();
         return services;
     }
 

@@ -39,8 +39,8 @@ const string tokenOptionsConfigurationSection = "TokenOptions";
 TokenOptions tokenOptions =
     builder.Configuration.GetSection(tokenOptionsConfigurationSection).Get<TokenOptions>()
     ?? throw new InvalidOperationException($"\"{tokenOptionsConfigurationSection}\" section cannot found in configuration.");
-builder
-    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -56,14 +56,16 @@ builder
     });
 
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddEndpointsApiExplorer();
+
+// CORS Servisi Ekleme
 builder.Services.AddCors(opt =>
     opt.AddDefaultPolicy(p =>
     {
         p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     })
 );
+
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.AddSecurityDefinition(
@@ -85,7 +87,9 @@ builder.Services.AddSwaggerGen(opt =>
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- MIDDLEWARE SIRALAMASI (PIPELINE) ---
+
+// 1. Swagger (Geliþtirme Ortamý)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -95,22 +99,33 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// 2. Exception Handling
 if (app.Environment.IsProduction())
     app.ConfigureCustomExceptionMiddleware();
 
+// 3. Database Migration (Varsa)
 app.UseDbMigrationApplier();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
+// 4. CORS (ÇOK ÖNEMLÝ: Auth'dan ÖNCE gelmeli)
 const string webApiConfigurationSection = "WebAPIConfiguration";
 WebApiConfiguration webApiConfiguration =
     app.Configuration.GetSection(webApiConfigurationSection).Get<WebApiConfiguration>()
     ?? throw new InvalidOperationException($"\"{webApiConfigurationSection}\" section cannot found in configuration.");
-app.UseCors(opt => opt.WithOrigins(webApiConfiguration.AllowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
+app.UseCors(opt =>
+    opt.WithOrigins(webApiConfiguration.AllowedOrigins)
+       .AllowAnyHeader()
+       .AllowAnyMethod()
+       .AllowCredentials()); // Cookie kullandýðýn için AllowCredentials þart
+
+// 5. Localization
 app.UseResponseLocalization();
+
+// 6. Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+// 7. Controller Mapping (En Son)
+app.MapControllers();
 
 app.Run();
