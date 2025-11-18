@@ -1,5 +1,6 @@
-using Domain.Enums;
+
 using NArchitecture.Core.Application.Dtos;
+using Shared.Enums;
 
 namespace Application.Features.Bookings.Queries.GetListByDynamic;
 

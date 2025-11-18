@@ -38,7 +38,7 @@ public class LoginTests
         UserFakeData userFakeData
     )
     {
-        _configuration = MockConfiguration.GetConfigurationMock();
+        //_configuration = MockConfiguration.GetConfigurationMock();
         #region Mock Repositories
         IUserOperationClaimRepository _userOperationClaimRepository = new MockUserOperationClaimRepository(
             operationClaimFakeData

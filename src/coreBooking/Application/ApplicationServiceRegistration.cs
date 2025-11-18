@@ -24,6 +24,8 @@ using Application.Services.Hotels;
 using Application.Services.RoomTypes;
 using Application.Services.Inventories;
 using Application.Services.Bookings;
+using Application.Services.Guests;
+using Application.Services.Payments;
 
 namespace Application;
 
@@ -69,6 +71,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IRoomTypeService, RoomTypeManager>();
         services.AddScoped<IInventoryService, InventoryManager>();
         services.AddScoped<IBookingService, BookingManager>();
+        services.AddScoped<IGuestService, GuestManager>();
+        services.AddScoped<IPaymentService, PaymentManager>();
         return services;
     }
 

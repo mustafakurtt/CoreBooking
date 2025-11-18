@@ -18,6 +18,8 @@ public class BaseDbContext : DbContext
     public DbSet<RoomType> RoomTypes { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
     public DbSet<Booking> Bookings { get; set; }
+    public DbSet<Guest> Guests { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)

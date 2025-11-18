@@ -15,21 +15,29 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+
         CreateMap<CreateInventoryCommand, Inventory>();
-        CreateMap<Inventory, CreatedInventoryResponse>();
+        CreateMap<Inventory, CreatedInventoryResponse>()
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount)); // Money.Amount -> decimal
 
         CreateMap<UpdateInventoryCommand, Inventory>();
-        CreateMap<Inventory, UpdatedInventoryResponse>();
+        CreateMap<Inventory, UpdatedInventoryResponse>()
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount)); // Update dönüþü için de gerekli
 
         CreateMap<DeleteInventoryCommand, Inventory>();
         CreateMap<Inventory, DeletedInventoryResponse>();
 
-        CreateMap<Inventory, GetByIdInventoryResponse>();
+        CreateMap<Inventory, GetByIdInventoryResponse>()
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount));
 
-        CreateMap<Inventory, GetListInventoryListItemDto>();
+        CreateMap<Inventory, GetListInventoryListItemDto>()
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount));
+
         CreateMap<IPaginate<Inventory>, GetListResponse<GetListInventoryListItemDto>>();
 
-        CreateMap<Inventory, GetListByDynamicInventoryListItemDto>();
+        CreateMap<Inventory, GetListByDynamicInventoryListItemDto>()
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount));
+
         CreateMap<IPaginate<Inventory>, GetListResponse<GetListByDynamicInventoryListItemDto>>();
     }
 }

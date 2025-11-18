@@ -7,7 +7,7 @@ using NArchitecture.Core.Application.Pipelines.Authorization;
 using NArchitecture.Core.Application.Pipelines.Logging;
 using NArchitecture.Core.Application.Pipelines.Transaction;
 using MediatR;
-using Domain.Enums;
+using Shared.Enums;
 using static Application.Features.Bookings.Constants.BookingsOperationClaims;
 
 namespace Application.Features.Bookings.Commands.Update;

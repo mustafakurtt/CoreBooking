@@ -1,5 +1,5 @@
 using NArchitecture.Core.Application.Dtos;
-using Domain.Enums;
+using Shared.Enums;
 
 namespace Application.Features.Bookings.Queries.GetList;
 

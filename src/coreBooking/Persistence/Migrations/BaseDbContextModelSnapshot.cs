@@ -17,7 +17,7 @@ namespace Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -28,14 +28,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
-
-                    b.Property<DateTime>("CheckInDate")
-                        .HasColumnType("date")
-                        .HasColumnName("CheckInDate");
-
-                    b.Property<DateTime>("CheckOutDate")
-                        .HasColumnType("date")
-                        .HasColumnName("CheckOutDate");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2")
@@ -60,10 +52,6 @@ namespace Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int")
                         .HasColumnName("Status");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("TotalPrice");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
@@ -116,6 +104,62 @@ namespace Persistence.Migrations
                     b.ToTable("EmailAuthenticators", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Guest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BookingId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("date")
+                        .HasColumnName("DateOfBirth");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("FirstName");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsPrimary");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("LastName");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Nationality");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("Guests", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Hotel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,14 +167,10 @@ namespace Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Address");
-
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("City");
 
                     b.Property<DateTime>("CreatedDate")
@@ -143,7 +183,8 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("Name");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -173,10 +214,6 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("Price");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
@@ -516,6 +553,78 @@ namespace Persistence.Migrations
                             Id = 47,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Bookings.Delete"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Admin"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Read"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Write"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Create"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Update"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Guests.Delete"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Admin"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Read"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Write"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Create"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Update"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Payments.Delete"
                         });
                 });
 
@@ -556,6 +665,50 @@ namespace Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("OtpAuthenticators", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BookingId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("Date");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("Status");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("TransactionId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -702,12 +855,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d078239a-15f5-4c34-9cdd-bdef81d57660"),
+                            Id = new Guid("802adff2-82c2-4506-9a1d-a3e156f4b3d2"),
                             AuthenticatorType = 0,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "narch@kodlama.io",
-                            PasswordHash = new byte[] { 163, 59, 215, 11, 7, 243, 49, 28, 151, 169, 114, 44, 132, 46, 135, 22, 191, 182, 248, 148, 77, 30, 173, 202, 75, 85, 98, 227, 255, 30, 252, 26, 92, 149, 154, 194, 9, 168, 82, 155, 235, 62, 4, 107, 238, 151, 41, 44, 78, 91, 11, 73, 139, 215, 161, 85, 32, 54, 104, 45, 57, 201, 76, 189 },
-                            PasswordSalt = new byte[] { 98, 78, 141, 196, 250, 143, 181, 55, 172, 229, 67, 184, 137, 8, 203, 56, 13, 228, 77, 147, 213, 199, 84, 232, 217, 46, 39, 5, 65, 244, 208, 92, 50, 194, 98, 208, 66, 39, 7, 72, 175, 224, 251, 210, 27, 121, 152, 19, 47, 214, 11, 168, 234, 162, 230, 202, 115, 111, 227, 7, 176, 147, 244, 114, 236, 142, 75, 221, 252, 201, 243, 63, 229, 8, 3, 242, 242, 106, 142, 20, 186, 130, 92, 156, 122, 18, 221, 102, 233, 10, 38, 77, 31, 28, 64, 223, 148, 6, 234, 205, 68, 205, 184, 152, 21, 149, 60, 160, 218, 240, 84, 110, 221, 201, 226, 16, 24, 87, 11, 235, 171, 136, 27, 122, 28, 118, 236, 95 }
+                            PasswordHash = new byte[] { 127, 236, 143, 148, 48, 18, 170, 177, 188, 197, 192, 29, 223, 188, 128, 225, 136, 55, 4, 86, 103, 202, 83, 94, 202, 10, 134, 138, 122, 131, 153, 111, 172, 71, 193, 24, 6, 211, 178, 239, 131, 28, 158, 29, 27, 171, 174, 127, 247, 5, 115, 166, 86, 237, 140, 9, 36, 209, 252, 191, 250, 236, 15, 61 },
+                            PasswordSalt = new byte[] { 195, 233, 61, 251, 136, 230, 125, 42, 220, 99, 31, 94, 72, 66, 86, 11, 56, 185, 247, 100, 204, 56, 3, 139, 189, 83, 88, 89, 25, 187, 67, 121, 76, 105, 61, 25, 32, 210, 215, 17, 162, 210, 28, 153, 110, 80, 205, 213, 6, 115, 35, 105, 133, 79, 119, 161, 38, 21, 17, 163, 59, 79, 247, 134, 178, 98, 96, 99, 21, 50, 2, 99, 202, 213, 114, 31, 230, 73, 177, 48, 135, 10, 168, 86, 101, 213, 162, 88, 107, 192, 179, 100, 18, 64, 217, 4, 229, 38, 179, 147, 100, 100, 37, 116, 42, 247, 200, 251, 145, 228, 172, 174, 143, 144, 8, 145, 28, 190, 44, 192, 154, 250, 81, 232, 140, 106, 178, 145 }
                         });
                 });
 
@@ -749,10 +902,10 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f37c85ed-4b99-4757-8281-178dad72289e"),
+                            Id = new Guid("700a3fd6-b9c7-4888-8281-14d178de167d"),
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OperationClaimId = 1,
-                            UserId = new Guid("d078239a-15f5-4c34-9cdd-bdef81d57660")
+                            UserId = new Guid("802adff2-82c2-4506-9a1d-a3e156f4b3d2")
                         });
                 });
 
@@ -770,9 +923,58 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Domain.ValueObjects.Money", "TotalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("BookingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("TotalPrice_Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasMaxLength(3)
+                                .HasColumnType("int")
+                                .HasColumnName("TotalPrice_Currency");
+
+                            b1.HasKey("BookingId");
+
+                            b1.ToTable("Bookings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookingId");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.DateRange", "Period", b1 =>
+                        {
+                            b1.Property<Guid>("BookingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("End")
+                                .HasColumnType("date")
+                                .HasColumnName("CheckOutDate");
+
+                            b1.Property<DateTime>("Start")
+                                .HasColumnType("date")
+                                .HasColumnName("CheckInDate");
+
+                            b1.HasKey("BookingId");
+
+                            b1.ToTable("Bookings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookingId");
+                        });
+
                     b.Navigation("Customer");
 
+                    b.Navigation("Period")
+                        .IsRequired();
+
                     b.Navigation("RoomType");
+
+                    b.Navigation("TotalPrice")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.EmailAuthenticator", b =>
@@ -786,12 +988,91 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Guest", b =>
+                {
+                    b.HasOne("Domain.Entities.Booking", "Booking")
+                        .WithMany("Guests")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Hotel", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("HotelId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Address_City");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Address_Country");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)")
+                                .HasColumnName("Address_Street");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Address_ZipCode");
+
+                            b1.HasKey("HotelId");
+
+                            b1.ToTable("Hotels");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HotelId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("Domain.Entities.RoomType", "RoomType")
                         .WithMany("Inventories")
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("InventoryId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("Price_Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasMaxLength(3)
+                                .HasColumnType("int")
+                                .HasColumnName("Price_Currency");
+
+                            b1.HasKey("InventoryId");
+
+                            b1.ToTable("Inventories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InventoryId");
+                        });
+
+                    b.Navigation("Price")
                         .IsRequired();
 
                     b.Navigation("RoomType");
@@ -806,6 +1087,42 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("Domain.Entities.Booking", "Booking")
+                        .WithMany("Payments")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("Amount_Amount");
+
+                            b1.Property<int>("Currency")
+                                .HasMaxLength(3)
+                                .HasColumnType("int")
+                                .HasColumnName("Amount_Currency");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("Payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -847,6 +1164,13 @@ namespace Persistence.Migrations
                     b.Navigation("OperationClaim");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Booking", b =>
+                {
+                    b.Navigation("Guests");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Hotel", b =>

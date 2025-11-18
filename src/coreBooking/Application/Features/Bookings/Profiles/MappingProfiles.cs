@@ -31,5 +31,10 @@ public class MappingProfiles : Profile
 
         CreateMap<Booking, GetListByDynamicBookingListItemDto>();
         CreateMap<IPaginate<Booking>, GetListResponse<GetListByDynamicBookingListItemDto>>();
+
+        CreateMap<Booking, CreatedBookingResponse>()
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.Amount))
+            .ForMember(dest => dest.CheckInDate, opt => opt.MapFrom(src => src.Period.Start))
+            .ForMember(dest => dest.CheckOutDate, opt => opt.MapFrom(src => src.Period.End));
     }
 }

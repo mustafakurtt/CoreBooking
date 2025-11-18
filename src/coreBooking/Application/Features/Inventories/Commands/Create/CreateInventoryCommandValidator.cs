@@ -9,6 +9,5 @@ public class CreateInventoryCommandValidator : AbstractValidator<CreateInventory
         RuleFor(c => c.RoomTypeId).NotEmpty();
         RuleFor(c => c.Date).NotEmpty();
         RuleFor(c => c.Quantity).NotEmpty();
-        RuleFor(c => c.Price).NotEmpty();
     }
 }

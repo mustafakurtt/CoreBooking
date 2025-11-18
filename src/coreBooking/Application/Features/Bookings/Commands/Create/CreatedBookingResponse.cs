@@ -1,5 +1,6 @@
 using NArchitecture.Core.Application.Responses;
-using Domain.Enums;
+
+using Shared.Enums;
 
 namespace Application.Features.Bookings.Commands.Create;
 

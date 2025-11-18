@@ -10,6 +10,10 @@ using Application.Features.Hotels.Constants;
 using Application.Features.RoomTypes.Constants;
 using Application.Features.Inventories.Constants;
 using Application.Features.Bookings.Constants;
+using Application.Features.Guests.Constants;
+using Application.Features.Payments.Constants;
+
+
 
 
 
@@ -165,6 +169,38 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
                 new() { Id = ++lastId, Name = "Bookings.Create" },
                 new() { Id = ++lastId, Name = "Bookings.Update" },
                 new() { Id = ++lastId, Name = "Bookings.Delete" },
+            ]
+        );
+        #endregion
+        
+        
+        #region Guests CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "Guests.Admin" },
+                new() { Id = ++lastId, Name = "Guests.Read" },
+                new() { Id = ++lastId, Name = "Guests.Write" },
+                
+                new() { Id = ++lastId, Name = "Guests.Create" },
+                new() { Id = ++lastId, Name = "Guests.Update" },
+                new() { Id = ++lastId, Name = "Guests.Delete" },
+            ]
+        );
+        #endregion
+        
+        
+        #region Payments CRUD
+        
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = "Payments.Admin" },
+                new() { Id = ++lastId, Name = "Payments.Read" },
+                new() { Id = ++lastId, Name = "Payments.Write" },
+                
+                new() { Id = ++lastId, Name = "Payments.Create" },
+                new() { Id = ++lastId, Name = "Payments.Update" },
+                new() { Id = ++lastId, Name = "Payments.Delete" },
             ]
         );
         #endregion
