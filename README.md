@@ -1,118 +1,139 @@
-<p align="center">
-  <a href="https://github.com/kodlamaio-projects/nArchitecture/graphs/contributors"><img src="https://img.shields.io/github/contributors/kodlamaio-projects/nArchitecture.svg?style=for-the-badge"></a>
-  <a href="https://github.com/kodlamaio-projects/nArchitecture/network/members"><img src="https://img.shields.io/github/forks/kodlamaio-projects/nArchitecture.svg?style=for-the-badge"></a>
-  <a href="https://github.com/kodlamaio-projects/nArchitecture/stargazers"><img src="https://img.shields.io/github/stars/kodlamaio-projects/nArchitecture.svg?style=for-the-badge"></a>
-  <a href="https://github.com/kodlamaio-projects/nArchitecture/issues"><img src="https://img.shields.io/github/issues/kodlamaio-projects/nArchitecture.svg?style=for-the-badge"></a>
-  <a href="https://github.com/kodlamaio-projects/nArchitecture/blob/master/LICENSE"><img src="https://img.shields.io/github/license/kodlamaio-projects/nArchitecture.svg?style=for-the-badge"></a>
-</p><br />
+<div align="center">
 
-<p align="center">
-  <a href="https://github.com/kodlamaio-projects/nArchitecture"><img src="https://user-images.githubusercontent.com/53148314/194872467-827dc967-acee-4bca-88a2-59ed5695bebf.png" height="125"></a>
-  <h3 align="center">nArchitecture Project
-</h3>
+  <h1 align="center">CoreBooking API</h1>
+
   <p align="center">
-    <!-- PROJECT_DESCRIPTION -->
-    <!-- <br />
-    <a href="https://github.com/kodlamaio-projects/nArchitecture"><strong>Explore the docs »</strong></a>
-    <br /> -->
-    <!-- <br />
-    <a href="https://github.com/kodlamaio-projects/nArchitecture">View Demo</a>
-    · -->
-    <a href="https://github.com/kodlamaio-projects/nArchitecture/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/kodlamaio-projects/nArchitecture/discussions">Request Feature</a>
+    <strong>Advanced Hotel Booking Engine built with .NET 8, Clean Architecture, and DDD.</strong>
+    <br />
+    Features CQRS, Optimistic Concurrency Control, and Dynamic Inventory Management.
+    <br />
+    <br />
+    <a href="#-about-the-project">About</a> ·
+    <a href="#-architecture--design-patterns">Architecture</a> ·
+    <a href="#-getting-started">Getting Started</a> ·
+    <a href="#-key-features">Features</a>
   </p>
-</p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet" alt=".NET 8">
+    <img src="https://img.shields.io/badge/Architecture-Clean%20%26%20DDD-blue?style=for-the-badge" alt="Architecture">
+    <img src="https://img.shields.io/badge/Database-SQL%20Server-CC2927?style=for-the-badge&logo=microsoft-sql-server" alt="SQL Server">
+    <img src="https://img.shields.io/badge/Pattern-CQRS-green?style=for-the-badge" alt="CQRS">
+  </p>
+</div>
+
+<br />
 
 ## 💻 About The Project
 
-As Kodlama.io, we decided to share examples of completed projects. Inspired by Clean Architecture, nArchitecture is a monolith project that showcases advanced development techniques. The project includes Clean Architecture, CQRS, Advanced Repository, Dynamic Querying, JWT, OTP, Google & Microsoft Auth, Role-Based Management, Distributed Caching (Redis), Logging (Serilog), Elastic Search, [Code Generator](https://github.com/kodlamaio-projects/nArchitecture.Gen) and much more. By contributing, you can support the project and learn new things.
+**CoreBooking** is a robust backend API designed to solve real-world challenges in the hospitality industry. Unlike simple CRUD applications, CoreBooking addresses complex scenarios such as **inventory management**, **dynamic pricing**, and the critical **"double booking" (overbooking)** problem in high-concurrency environments.
 
-### Built With
+Built on top of the solid foundation of `nArchitecture`, this project demonstrates how to implement **Rich Domain Models** and **Business Invariants** within a scalable infrastructure.
 
-[![](https://img.shields.io/badge/.NET%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/tr-tr/dotnet/welcome)
+## 🏗 Architecture & Design Patterns
+
+This project adheres to **Clean Architecture** principles and **Domain-Driven Design (DDD)**.
+
+### Core Concepts Implemented:
+* **CQRS (Command Query Responsibility Segregation):** * Separated Read and Write operations using **MediatR**.
+    * Write operations (`Commands`) handle complex domain logic and transaction consistency.
+    * Read operations (`Queries`) are optimized for performance.
+* **Domain-Driven Design (DDD):**
+    * **Rich Domain Model:** Entities like `Booking` and `Inventory` encapsulate their own logic (e.g., validation, state changes) rather than being Anemic data bags.
+    * **Invariant Protection:** Business rules (e.g., "Cannot cancel within 3 days") are enforced within the Domain layer.
+* **Optimistic Concurrency Control:**
+    * Solved the "Last Room" problem using `RowVersion` (Timestamp) at the database level.
+    * Prevents race conditions where multiple users try to book the same last unit simultaneously.
+* **Dynamic Inventory & Pricing:**
+    * Prices are not static; they are calculated dynamically based on daily inventory rates stored in the database.
+
+## 🌟 Key Features
+
+- **🏨 Hotel & Room Management:** Flexible hierarchy for managing properties and room types.
+- **📅 Granular Inventory System:** Daily stock and price management for precise availability control.
+- **🛡️ Concurrency Safe Booking:** Thread-safe booking process using EF Core's Optimistic Concurrency.
+- **💰 Dynamic Price Calculation:** Automatically aggregates daily prices for a given date range.
+- **🔐 Robust Security:** JWT-based Authentication, Refresh Token rotation, and Role-Based Authorization.
+- **⚡ Performance:** Middleware optimizations, Caching infrastructure (Redis ready), and efficient LINQ queries.
+
+## 🛠️ Tech Stack
+
+* **Framework:** .NET 8 Web API
+* **Language:** C# 12
+* **Data Access:** Entity Framework Core 8
+* **Database:** Microsoft SQL Server
+* **Mediator:** MediatR
+* **Validation:** FluentValidation
+* **Mapping:** AutoMapper
+* **Documentation:** Swagger / OpenAPI
+* **Boilerplate:** [nArchitecture](https://github.com/kodlamaio-projects/nArchitecture)
 
 ## ⚙️ Getting Started
 
-To get a local copy up and running follow these simple steps.
+Follow these steps to get a local copy up and running.
 
 ### Prerequisites
 
-- .NET 7
+* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+* SQL Server (LocalDB or Full Instance)
 
 ### Installation
 
-1. Clone the repo
-   ```sh
-   git clone --recurse-submodules https://github.com/kodlamaio-projects/nArchitecture.git
-   ```
-2. Configure `appsettings.json` in WebAPI.
-3. Run `Update-Database` command with Package Manager Console in WebAPI to create tables in sql server.
+1.  **Clone the repository**
+    ```sh
+    git clone [https://github.com/yourusername/CoreBooking.git](https://github.com/yourusername/CoreBooking.git)
+    cd CoreBooking
+    ```
 
-- Run the following command to update submodules
-  ```sh
-   git submodule update --remote
-   ```
+2.  **Configure Database**
+    Update the connection string in `src/coreBooking/WebAPI/appsettings.json`:
+    ```json
+    "ConnectionStrings": {
+      "BaseDb": "Server=(localdb)\\mssqllocaldb;Database=CoreBookingDb;Trusted_Connection=True;"
+    }
+    ```
 
-## 🚀 Usage
+3.  **Apply Migrations**
+    Open your terminal in the root folder and run:
+    ```sh
+    dotnet ef database update --project src/coreBooking/Persistence --startup-project src/coreBooking/WebAPI
+    ```
+    *(Or use Package Manager Console: `Update-Database`)*
 
-1. Run example WebAPI project `dotnet run --project src\rentACar\WebAPI`
+4.  **Run the API**
+    ```sh
+    dotnet run --project src/coreBooking/WebAPI
+    ```
 
-### Analysis
+### Data Seeding (How to Test)
 
-1. If not, Install dotnet tool `dotnet tool restore`.
-2. Run anaylsis command `dotnet roslynator analyze`
+Since the logic relies on inventory, follow this flow in Swagger to test the booking engine:
 
-### Format
-
-1. If not, Install dotnet tool `dotnet tool restore`.
-2. Run format command `dotnet csharpier .`
+1.  **Auth:** Register a new user via `/api/Auth/Register` and copy the `AccessToken`. Authorize via the padlock button.
+2.  **Hotel:** Create a Hotel via `POST /api/Hotels`.
+3.  **Room:** Create a RoomType via `POST /api/RoomTypes`.
+4.  **Inventory:** Add stock for specific dates (e.g., tomorrow) via `POST /api/Inventories`.
+5.  **Booking:** Use `POST /api/Bookings` to make a reservation. The system will check stock, calculate the price, and reduce the inventory quantity.
 
 ## 🚧 Roadmap
 
-See the [open issues](https://github.com/kodlamaio-projects/nArchitecture/issues) for a list of proposed features (and known issues).
+- [x] Core Domain Modeling & Relationships
+- [x] Inventory Management & Pricing Logic
+- [x] **Optimistic Concurrency Control** implementation
+- [ ] Advanced Search Engine (Search by City, Date Range, Pax)
+- [ ] Booking Cancellation & Refund Logic
+- [ ] Payment Gateway Integration
+- [ ] Unit & Integration Tests
 
 ## 🤝 Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the project and clone your local machine
-2. Create your Feature Branch (`git checkout -b <Feature>/<AmazingFeature>'`)
-3. Develop
-4. Commit your Changes (`git add . && git commit -m '<SemanticCommitType>(<Scope>): <AmazingFeature>'`)
-   💡 Check [Semantic Commit Messages](./docs/Semantic%20Commit%20Messages.md)
-5. Push to the Branch (`git push origin <Feature>/<AmazingFeature>`)
-6. Open a Pull Request
-
-Contributing on Core Packages With This Repo:
-
-1. Fork the [nArchitecture.Core](https://github.com/kodlamaio-projects/nArchitecture.Core) project
-2. Locate to `src/corePackages` path (`cd .\src\corePackages\`)
-3. Add your forked nArchitecture.Core repository remote address (`git remote add <YourUserName> https://github.com/<YourUserName>/nArchitecture.Core.git`)
-4. Create your Feature Branch (`git checkout -b <Feature>/<AmazingFeature>'`)
-5. Develop
-6. Commit your changes (`git add . && git commit -m '<SemanticCommitType>(<Scope>): <AmazingFeature>'`)
-   💡 Check [Semantic Commit Messages](./docs/Semantic%20Commit%20Messages.md)
-7. Push to the branch (`git push <YourUserName> --set-upstream HEAD:refs/heads/<Feature>/<AmazingFeature>`)
-8. Open a Pull Request
-
-If your pull request is accepted and merged:
-
-9. Locate to `src/corePackages` path (`cd .\src\corePackages\`)
-10. Switch to main branch `git checkout main`
-11. Locate root path `/` path (`cd ..\..\`)
-12. Pull repo and submodule `git submodule update --remote`
-13. Commit your changes (`git add . && git commit -m 'build(corePackages): update submodule'`)
-14. Push to the Branch (`git push origin <Feature>/<AmazingFeature>`)
-15. Open a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## ⚖️ License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License.
 
-## 📧 Contact
-
-**Project Link:** [https://github.com/kodlamaio-projects/nArchitecture](https://github.com/kodlamaio-projects/nArchitecture)
-
-<!-- ## 🙏 Acknowledgements
-- []() -->
+---
+<p align="center">
+    Made with 💻 by <a href="https://github.com/mustafakurtt">Mustafa Kurt</a>
+</p>
