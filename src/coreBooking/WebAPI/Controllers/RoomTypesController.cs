@@ -1,13 +1,14 @@
 using Application.Features.RoomTypes.Commands.Create;
 using Application.Features.RoomTypes.Commands.Delete;
 using Application.Features.RoomTypes.Commands.Update;
+using Application.Features.RoomTypes.Queries.GetAvailableRooms;
 using Application.Features.RoomTypes.Queries.GetById;
 using Application.Features.RoomTypes.Queries.GetList;
 using Application.Features.RoomTypes.Queries.GetListByDynamic;
-using NArchitecture.Core.Persistence.Dynamic;
+using Microsoft.AspNetCore.Mvc;
 using NArchitecture.Core.Application.Requests;
 using NArchitecture.Core.Application.Responses;
-using Microsoft.AspNetCore.Mvc;
+using NArchitecture.Core.Persistence.Dynamic;
 
 namespace WebAPI.Controllers;
 
@@ -66,6 +67,13 @@ public class RoomTypesController : BaseController
     {
         GetListByDynamicRoomTypeQuery getListByDynamicRoomTypeQuery = new() { PageRequest = pageRequest, Dynamic = dynamic };
         GetListResponse<GetListByDynamicRoomTypeListItemDto> response = await Mediator.Send(getListByDynamicRoomTypeQuery);
+        return Ok(response);
+    }
+
+    [HttpPost("GetAvailableRooms")]
+    public async Task<IActionResult> GetAvailableRooms([FromBody] GetAvailableRoomsQuery query)
+    {
+        GetListResponse<GetAvailableRoomsResponse> response = await Mediator.Send(query);
         return Ok(response);
     }
 }

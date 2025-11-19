@@ -1,3 +1,4 @@
+using Application.Features.Bookings.Commands.Cancel;
 using Application.Features.Bookings.Commands.Create;
 using Application.Features.Bookings.Commands.Delete;
 using Application.Features.Bookings.Commands.Update;
@@ -5,8 +6,8 @@ using Application.Features.Bookings.Queries.GetById;
 using Application.Features.Bookings.Queries.GetList;
 using Application.Features.Bookings.Queries.GetListByDynamic;
 using AutoMapper;
-using NArchitecture.Core.Application.Responses;
 using Domain.Entities;
+using NArchitecture.Core.Application.Responses;
 using NArchitecture.Core.Persistence.Paging;
 
 namespace Application.Features.Bookings.Profiles;
@@ -31,6 +32,8 @@ public class MappingProfiles : Profile
 
         CreateMap<Booking, GetListByDynamicBookingListItemDto>();
         CreateMap<IPaginate<Booking>, GetListResponse<GetListByDynamicBookingListItemDto>>();
+
+        CreateMap<Booking, CanceledBookingResponse>();
 
         CreateMap<Booking, CreatedBookingResponse>()
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.Amount))

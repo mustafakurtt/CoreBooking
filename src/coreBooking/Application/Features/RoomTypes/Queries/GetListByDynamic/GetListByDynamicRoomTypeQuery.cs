@@ -21,7 +21,7 @@ public class GetListByDynamicRoomTypeQuery : IRequest<GetListResponse<GetListByD
     public DynamicQuery Dynamic { get; set; }
 
     // Rolleri RoomTypesOperationClaims üzerinden yönetmek daha temizdir
-    public string[] Roles => [Admin, Read];
+    public string[] Roles => [RoomTypesOperationClaims.Admin, RoomTypesOperationClaims.Read];
 
     public bool BypassCache { get; }
     public string CacheKey => $"GetListByDynamicRoomType-{PageRequest.PageIndex}-{PageRequest.PageSize}";

@@ -7,6 +7,7 @@ using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NArchitecture.Core.Application.Pipelines.Authorization;
+using NArchitecture.Core.Application.Pipelines.Caching;
 using NArchitecture.Core.Application.Pipelines.Logging;
 using NArchitecture.Core.Application.Pipelines.Transaction;
 using NArchitecture.Core.CrossCuttingConcerns.Exception.Types;
@@ -16,7 +17,7 @@ using static Application.Features.Bookings.Constants.BookingsOperationClaims;
 
 namespace Application.Features.Bookings.Commands.Create;
 
-public class CreateBookingCommand : IRequest<CreatedBookingResponse>, ISecuredRequest, ILoggableRequest, ITransactionalRequest
+public class CreateBookingCommand : IRequest<CreatedBookingResponse>, ISecuredRequest, ILoggableRequest, ITransactionalRequest, ICacheRemoverRequest
 {
     public required Guid CustomerId { get; set; }
     public required Guid RoomTypeId { get; set; }
@@ -25,6 +26,10 @@ public class CreateBookingCommand : IRequest<CreatedBookingResponse>, ISecuredRe
     public required int NumberOfGuests { get; set; }
 
     public string[] Roles => [Admin, Write, BookingsOperationClaims.Create];
+
+    public bool BypassCache { get; }
+    public string? CacheKey => null;
+    public string[]? CacheGroupKey => ["GetAvailableRooms"];
 
     public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, CreatedBookingResponse>
     {
