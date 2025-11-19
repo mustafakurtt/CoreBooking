@@ -3,15 +3,15 @@
   <h1 align="center">CoreBooking API</h1>
 
   <p align="center">
-    <strong>Advanced Hotel Booking Engine built with .NET 8, Clean Architecture, and DDD.</strong>
+    <strong>Enterprise-grade Hotel Booking Engine built with .NET 8, Clean Architecture, and DDD.</strong>
     <br />
-    Features CQRS, Optimistic Concurrency Control, and Dynamic Inventory Management.
+    Features CQRS, Optimistic Concurrency, Hybrid Search Engine, and Dynamic Inventory Management.
     <br />
     <br />
     <a href="#-about-the-project">About</a> ·
-    <a href="#-architecture--design-patterns">Architecture</a> ·
-    <a href="#-getting-started">Getting Started</a> ·
-    <a href="#-key-features">Features</a>
+    <a href="#-architecture--patterns">Architecture</a> ·
+    <a href="#-search-engine-logic">Search Engine</a> ·
+    <a href="#-booking-lifecycle">Lifecycle</a>
   </p>
 
   <p align="center">
@@ -26,114 +26,102 @@
 
 ## 💻 About The Project
 
-**CoreBooking** is a robust backend API designed to solve real-world challenges in the hospitality industry. Unlike simple CRUD applications, CoreBooking addresses complex scenarios such as **inventory management**, **dynamic pricing**, and the critical **"double booking" (overbooking)** problem in high-concurrency environments.
+**CoreBooking** is a robust backend API designed to simulate the core engine of OTAs (Online Travel Agencies) like Booking.com or Expedia. It solves complex distributed system problems such as **inventory management**, **dynamic pricing aggregation**, and the critical **"double booking" (overbooking)** problem in high-concurrency environments.
 
-Built on top of the solid foundation of `nArchitecture`, this project demonstrates how to implement **Rich Domain Models** and **Business Invariants** within a scalable infrastructure.
+Unlike simple CRUD applications, this project enforces **Rich Domain Models** and strict **Business Invariants** within a scalable infrastructure.
 
-## 🏗 Architecture & Design Patterns
+---
 
-This project adheres to **Clean Architecture** principles and **Domain-Driven Design (DDD)**.
+## 🏗 Architecture & Patterns
 
-### Core Concepts Implemented:
-* **CQRS (Command Query Responsibility Segregation):** * Separated Read and Write operations using **MediatR**.
-    * Write operations (`Commands`) handle complex domain logic and transaction consistency.
-    * Read operations (`Queries`) are optimized for performance.
-* **Domain-Driven Design (DDD):**
-    * **Rich Domain Model:** Entities like `Booking` and `Inventory` encapsulate their own logic (e.g., validation, state changes) rather than being Anemic data bags.
-    * **Invariant Protection:** Business rules (e.g., "Cannot cancel within 3 days") are enforced within the Domain layer.
-* **Optimistic Concurrency Control:**
-    * Solved the "Last Room" problem using `RowVersion` (Timestamp) at the database level.
-    * Prevents race conditions where multiple users try to book the same last unit simultaneously.
-* **Dynamic Inventory & Pricing:**
-    * Prices are not static; they are calculated dynamically based on daily inventory rates stored in the database.
+### 1. Domain-Driven Design (DDD) & V2 Architecture
+The project moved from Anemic Models (V1) to Rich Domain Models (V2).
+* **Value Objects:** Replaced primitive types with `Money`, `Address`, and `DateRange` to ensure type safety and logic encapsulation.
+* **Shared Kernel:** Centralized Constants and Enums for maintainability.
+* **Invariants:** Business rules (e.g., "Cannot cancel within 3 days") are enforced inside Entities.
 
-## 🌟 Key Features
+### 2. Optimistic Concurrency Control
+Solved the "Last Room" problem using `RowVersion` (Timestamp) at the database level.
+* **Scenario:** Two users try to book the last room at the exact same millisecond.
+* **Solution:** The database rejects the second transaction with a `DbUpdateConcurrencyException`, ensuring data consistency.
 
-- **🏨 Hotel & Room Management:** Flexible hierarchy for managing properties and room types.
-- **📅 Granular Inventory System:** Daily stock and price management for precise availability control.
-- **🛡️ Concurrency Safe Booking:** Thread-safe booking process using EF Core's Optimistic Concurrency.
-- **💰 Dynamic Price Calculation:** Automatically aggregates daily prices for a given date range.
-- **🔐 Robust Security:** JWT-based Authentication, Refresh Token rotation, and Role-Based Authorization.
-- **⚡ Performance:** Middleware optimizations, Caching infrastructure (Redis ready), and efficient LINQ queries.
+### 3. CQRS with Mediator
+* **Commands (Write):** Handle complex transaction scopes (Booking + Inventory + Payment).
+* **Queries (Read):** Optimized with EF Core `Include` and AutoMapper `Flattening` for rich DTOs.
+
+---
+
+## 🔍 Advanced Search Engine Logic
+
+The `GetAvailableRooms` query is not a simple filter; it's a hybrid algorithm.
+
+**The Challenge:** "Find a room for 5 nights."
+**The Solution:**
+1.  **Gap Analysis:** The query scans the `Inventory` table. It groups records by RoomType and checks if *every single day* in the requested range has `Quantity > 0`. If even one day is sold out, the room is excluded.
+2.  **Dynamic Pricing:** It aggregates (SUM) daily prices to calculate the total cost for the specific date range.
+3.  **Hybrid Filtering:** Combines custom LINQ logic (Availability/Price) with Dynamic Querying (City, Hotel Name filtering).
+
+---
+
+## 🔄 Booking Lifecycle & Logic
+
+The system manages the full lifecycle of a reservation:
+
+1.  **Create (Transaction):**
+    * Validates availability gap.
+    * Calculates total price dynamically.
+    * **Decrements** inventory stock.
+    * Uses **RowVersion** to prevent race conditions.
+2.  **Cancel (Compensation):**
+    * Checks Domain Rule: "Is check-in within 3 days?"
+    * **Increments** inventory stock (Restocking).
+    * Updates Payment status to `Refunded`.
+    * Invalidates Search Cache.
+
+---
 
 ## 🛠️ Tech Stack
 
 * **Framework:** .NET 8 Web API
-* **Language:** C# 12
 * **Data Access:** Entity Framework Core 8
 * **Database:** Microsoft SQL Server
 * **Mediator:** MediatR
 * **Validation:** FluentValidation
 * **Mapping:** AutoMapper
-* **Documentation:** Swagger / OpenAPI
+* **Caching:** Redis (Ready) / InMemory
 * **Boilerplate:** [nArchitecture](https://github.com/kodlamaio-projects/nArchitecture)
+
+---
+
+## 🚀 Roadmap & Status
+
+| Module | Status | Features |
+| :--- | :--- | :--- |
+| **Hotel** | ✅ Done | Address Value Object, Name Uniqueness Rule |
+| **RoomType** | ✅ Done | Enriched Queries, Hotel Relation |
+| **Inventory** | ✅ Done | Daily Stock, Money Value Object, Concurrency |
+| **Booking** | ✅ Done | **Core Engine**, DateRange Logic, Lifecycle Management |
+| **Payment** | ✅ Done | Financial Safety Rules, TransactionId Check |
+| **Guest** | ✅ Done | Capacity Control, EntityLengths Validation |
+| **Search** | ✅ Done | **Hybrid Search Algorithm** |
+
+---
 
 ## ⚙️ Getting Started
 
-Follow these steps to get a local copy up and running.
-
-### Prerequisites
-
-* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-* SQL Server (LocalDB or Full Instance)
-
-### Installation
-
 1.  **Clone the repository**
     ```sh
-    git clone [https://github.com/yourusername/CoreBooking.git](https://github.com/yourusername/CoreBooking.git)
-    cd CoreBooking
+    git clone [https://github.com/mustafakurtt/CoreBooking.git](https://github.com/mustafakurtt/CoreBooking.git)
     ```
-
-2.  **Configure Database**
-    Update the connection string in `src/coreBooking/WebAPI/appsettings.json`:
-    ```json
-    "ConnectionStrings": {
-      "BaseDb": "Server=(localdb)\\mssqllocaldb;Database=CoreBookingDb;Trusted_Connection=True;"
-    }
-    ```
-
-3.  **Apply Migrations**
-    Open your terminal in the root folder and run:
+2.  **Update Connection String** in `appsettings.json`.
+3.  **Run Migrations:**
     ```sh
     dotnet ef database update --project src/coreBooking/Persistence --startup-project src/coreBooking/WebAPI
     ```
-    *(Or use Package Manager Console: `Update-Database`)*
-
-4.  **Run the API**
-    ```sh
-    dotnet run --project src/coreBooking/WebAPI
-    ```
-
-### Data Seeding (How to Test)
-
-Since the logic relies on inventory, follow this flow in Swagger to test the booking engine:
-
-1.  **Auth:** Register a new user via `/api/Auth/Register` and copy the `AccessToken`. Authorize via the padlock button.
-2.  **Hotel:** Create a Hotel via `POST /api/Hotels`.
-3.  **Room:** Create a RoomType via `POST /api/RoomTypes`.
-4.  **Inventory:** Add stock for specific dates (e.g., tomorrow) via `POST /api/Inventories`.
-5.  **Booking:** Use `POST /api/Bookings` to make a reservation. The system will check stock, calculate the price, and reduce the inventory quantity.
-
-## 🚧 Roadmap
-
-- [x] Core Domain Modeling & Relationships
-- [x] Inventory Management & Pricing Logic
-- [x] **Optimistic Concurrency Control** implementation
-- [ ] Advanced Search Engine (Search by City, Date Range, Pax)
-- [ ] Booking Cancellation & Refund Logic
-- [ ] Payment Gateway Integration
-- [ ] Unit & Integration Tests
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## ⚖️ License
-
-Distributed under the MIT License.
+4.  **Run API:** `dotnet run --project src/coreBooking/WebAPI`
 
 ---
+
 <p align="center">
     Made with 💻 by <a href="https://github.com/mustafakurtt">Mustafa Kurt</a>
 </p>
