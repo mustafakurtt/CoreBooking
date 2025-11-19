@@ -113,10 +113,10 @@ WebApiConfiguration webApiConfiguration =
     ?? throw new InvalidOperationException($"\"{webApiConfigurationSection}\" section cannot found in configuration.");
 
 app.UseCors(opt =>
-    opt.WithOrigins(webApiConfiguration.AllowedOrigins)
-       .AllowAnyHeader()
-       .AllowAnyMethod()
-       .AllowCredentials()); // Cookie kullandığın için AllowCredentials şart
+    opt.SetIsOriginAllowed(origin => true) // <-- KRİTİK NOKTA: Gelen adres ne olursa olsun "True" dön.
+        .AllowAnyHeader()                   // Her türlü başlığa izin ver.
+        .AllowAnyMethod()                   // GET, POST, PUT, DELETE hepsine izin ver.
+        .AllowCredentials());
 
 // 5. Localization
 app.UseResponseLocalization();

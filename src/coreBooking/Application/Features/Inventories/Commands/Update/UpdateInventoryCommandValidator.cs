@@ -1,3 +1,4 @@
+using Application.Features.Inventories.Constants;
 using FluentValidation;
 
 namespace Application.Features.Inventories.Commands.Update;
@@ -9,7 +10,17 @@ public class UpdateInventoryCommandValidator : AbstractValidator<UpdateInventory
         RuleFor(c => c.Id).NotEmpty();
         RuleFor(c => c.RoomTypeId).NotEmpty();
         RuleFor(c => c.Date).NotEmpty();
-        RuleFor(c => c.Quantity).NotEmpty();
-        RuleFor(c => c.Price).NotEmpty();
+
+        // Stok Validasyonu
+        RuleFor(c => c.Quantity)
+            .GreaterThanOrEqualTo(0)
+            .WithMessage(InventoriesBusinessMessages.QuantityCannotBeNegative);
+
+        // Fiyat Validasyonu
+        RuleFor(c => c.PriceAmount)
+            .GreaterThan(0)
+            .WithMessage(InventoriesBusinessMessages.PriceMustBeGreaterThanZero);
+
+        RuleFor(c => c.PriceCurrency).IsInEnum();
     }
 }

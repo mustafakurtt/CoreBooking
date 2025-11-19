@@ -19,11 +19,9 @@ public class CreateInventoryCommand : IRequest<CreatedInventoryResponse>, ISecur
     public required DateTime Date { get; set; }
     public required int Quantity { get; set; }
 
-    // --- V2 GÜNCELLEMESÝ: Fiyat ve Para Birimi ---
-    // Eskiden: public required decimal Price { get; set; }
-    // Þimdi: Amount ve Currency olarak alýyoruz.
+    // --- V2: Flat Input ---
     public required decimal PriceAmount { get; set; }
-    public required Currency PriceCurrency { get; set; } // Enum (1=TRY, 2=USD...)
+    public required Currency PriceCurrency { get; set; }
 
     public string[] Roles => [Admin, Write, InventoriesOperationClaims.Create];
 
@@ -43,25 +41,25 @@ public class CreateInventoryCommand : IRequest<CreatedInventoryResponse>, ISecur
 
         public async Task<CreatedInventoryResponse> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
         {
-            // 1. Money Value Object'ini oluþturuyoruz
+            await _inventoryBusinessRules.RoomTypeIdShouldExist(request.RoomTypeId, cancellationToken);
+
+            await _inventoryBusinessRules.InventoryDateShouldNotBeInPast(request.Date);
+
+            await _inventoryBusinessRules.InventoryShouldNotExistsWhenInsert(request.RoomTypeId, request.Date, cancellationToken);
+
             Money price = new(request.PriceAmount, request.PriceCurrency);
 
-            // 2. Inventory Entity'sini oluþturuyoruz (Manuel mapping)
             Inventory inventory = new()
             {
                 Id = Guid.NewGuid(),
                 RoomTypeId = request.RoomTypeId,
                 Date = request.Date,
                 Quantity = request.Quantity,
-                Price = price // Oluþturduðumuz Money nesnesini atýyoruz
+                Price = price
             };
 
-            // 3. Veritabanýna Kayýt
             await _inventoryRepository.AddAsync(inventory);
 
-            // 4. Response Dönüþü
-            // Not: CreatedInventoryResponse DTO'su muhtemelen hala 'decimal Price' bekliyor olabilir.
-            // Eðer AutoMapper hata verirse, MappingProfile'da Price.Amount dönüþümü yapmalýsýn.
             CreatedInventoryResponse response = _mapper.Map<CreatedInventoryResponse>(inventory);
             return response;
         }

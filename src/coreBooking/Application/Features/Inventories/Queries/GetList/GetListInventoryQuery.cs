@@ -1,4 +1,4 @@
-using Application.Features.Inventories.Constants;
+﻿using Application.Features.Inventories.Constants;
 using Application.Services.Repositories;
 using AutoMapper;
 using Domain.Entities;
@@ -7,6 +7,7 @@ using NArchitecture.Core.Application.Requests;
 using NArchitecture.Core.Application.Responses;
 using NArchitecture.Core.Persistence.Paging;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using static Application.Features.Inventories.Constants.InventoriesOperationClaims;
 
 namespace Application.Features.Inventories.Queries.GetList;
@@ -32,7 +33,12 @@ public class GetListInventoryQuery : IRequest<GetListResponse<GetListInventoryLi
         {
             IPaginate<Inventory> inventories = await _inventoryRepository.GetListAsync(
                 index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize, 
+                size: request.PageRequest.PageSize,
+
+                // 🌟 ZİNCİRLEME İLİŞKİLERİ YÜKLÜYORUZ (Inventory -> RoomType -> Hotel)
+                include: i => i.Include(x => x.RoomType)
+                    .ThenInclude(rt => rt.Hotel),
+
                 cancellationToken: cancellationToken
             );
 

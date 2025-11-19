@@ -25,7 +25,7 @@ public class DeleteInventoryCommand : IRequest<DeletedInventoryResponse>, ISecur
         private readonly InventoryBusinessRules _inventoryBusinessRules;
 
         public DeleteInventoryCommandHandler(IMapper mapper, IInventoryRepository inventoryRepository,
-                                         InventoryBusinessRules inventoryBusinessRules)
+            InventoryBusinessRules inventoryBusinessRules)
         {
             _mapper = mapper;
             _inventoryRepository = inventoryRepository;
@@ -34,11 +34,23 @@ public class DeleteInventoryCommand : IRequest<DeletedInventoryResponse>, ISecur
 
         public async Task<DeletedInventoryResponse> Handle(DeleteInventoryCommand request, CancellationToken cancellationToken)
         {
-            Inventory? inventory = await _inventoryRepository.GetAsync(predicate: i => i.Id == request.Id, cancellationToken: cancellationToken);
+            // 1. Kaydý Getir
+            Inventory? inventory = await _inventoryRepository.GetAsync(
+                predicate: i => i.Id == request.Id,
+                cancellationToken: cancellationToken
+            );
+
+            // 2. Varlýk Kontrolü
             await _inventoryBusinessRules.InventoryShouldExistWhenSelected(inventory);
 
+            // 3. KURAL: Geçmiþ stok verisi silinemez (Rapor güvenliði)
+            // Bu kuralý daha önce InventoryBusinessRules içine eklemiþtik.
+            await _inventoryBusinessRules.InventoryDateShouldNotBeInPast(inventory!.Date);
+
+            // 4. Sil (Soft Delete)
             await _inventoryRepository.DeleteAsync(inventory!);
 
+            // 5. Response
             DeletedInventoryResponse response = _mapper.Map<DeletedInventoryResponse>(inventory);
             return response;
         }

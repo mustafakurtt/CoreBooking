@@ -1,10 +1,11 @@
-using Application.Features.Inventories.Constants;
+﻿using Application.Features.Inventories.Constants;
 using Application.Features.Inventories.Rules;
 using Application.Services.Repositories;
 using AutoMapper;
 using Domain.Entities;
 using NArchitecture.Core.Application.Pipelines.Authorization;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using static Application.Features.Inventories.Constants.InventoriesOperationClaims;
 
 namespace Application.Features.Inventories.Queries.GetById;
@@ -30,7 +31,17 @@ public class GetByIdInventoryQuery : IRequest<GetByIdInventoryResponse>, ISecure
 
         public async Task<GetByIdInventoryResponse> Handle(GetByIdInventoryQuery request, CancellationToken cancellationToken)
         {
-            Inventory? inventory = await _inventoryRepository.GetAsync(predicate: i => i.Id == request.Id, cancellationToken: cancellationToken);
+            Inventory? inventory = await _inventoryRepository.GetAsync(
+                predicate: i => i.Id == request.Id,
+
+                // 🌟 ZİNCİRLEME İLİŞKİLERİ YÜKLÜYORUZ
+                // Inventory -> RoomType -> Hotel
+                include: i => i.Include(x => x.RoomType)
+                    .ThenInclude(rt => rt.Hotel),
+
+                cancellationToken: cancellationToken
+            );
+
             await _inventoryBusinessRules.InventoryShouldExistWhenSelected(inventory);
 
             GetByIdInventoryResponse response = _mapper.Map<GetByIdInventoryResponse>(inventory);
