@@ -18,18 +18,31 @@ public class MappingProfiles : Profile
         CreateMap<CreateRoomTypeCommand, RoomType>();
         CreateMap<RoomType, CreatedRoomTypeResponse>();
 
+        // Update
         CreateMap<UpdateRoomTypeCommand, RoomType>();
         CreateMap<RoomType, UpdatedRoomTypeResponse>();
 
+        // Delete
         CreateMap<DeleteRoomTypeCommand, RoomType>();
         CreateMap<RoomType, DeletedRoomTypeResponse>();
 
-        CreateMap<RoomType, GetByIdRoomTypeResponse>();
 
-        CreateMap<RoomType, GetListRoomTypeListItemDto>();
+        // ---------------- QUERIES (Okuma Ýþlemleri) ----------------
+
+        // GetById Mapping (Zenginleþtirilmiþ: Hotel Adý ile)
+        CreateMap<RoomType, GetByIdRoomTypeResponse>()
+            .ForMember(dest => dest.HotelName, opt => opt.MapFrom(src => src.Hotel.Name));
+
+        // GetList Mapping (Zenginleþtirilmiþ: Hotel Adý ile)
+        CreateMap<RoomType, GetListRoomTypeListItemDto>()
+            .ForMember(dest => dest.HotelName, opt => opt.MapFrom(src => src.Hotel.Name));
+
         CreateMap<IPaginate<RoomType>, GetListResponse<GetListRoomTypeListItemDto>>();
 
-        CreateMap<RoomType, GetListByDynamicRoomTypeListItemDto>();
+        // GetListByDynamic Mapping (Zenginleþtirilmiþ: Hotel Adý ile)
+        CreateMap<RoomType, GetListByDynamicRoomTypeListItemDto>()
+            .ForMember(dest => dest.HotelName, opt => opt.MapFrom(src => src.Hotel.Name));
+
         CreateMap<IPaginate<RoomType>, GetListResponse<GetListByDynamicRoomTypeListItemDto>>();
     }
 }

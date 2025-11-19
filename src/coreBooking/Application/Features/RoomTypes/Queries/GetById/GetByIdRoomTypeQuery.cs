@@ -1,10 +1,11 @@
-using Application.Features.RoomTypes.Constants;
+﻿using Application.Features.RoomTypes.Constants;
 using Application.Features.RoomTypes.Rules;
 using Application.Services.Repositories;
 using AutoMapper;
 using Domain.Entities;
 using NArchitecture.Core.Application.Pipelines.Authorization;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using static Application.Features.RoomTypes.Constants.RoomTypesOperationClaims;
 
 namespace Application.Features.RoomTypes.Queries.GetById;
@@ -30,7 +31,15 @@ public class GetByIdRoomTypeQuery : IRequest<GetByIdRoomTypeResponse>, ISecuredR
 
         public async Task<GetByIdRoomTypeResponse> Handle(GetByIdRoomTypeQuery request, CancellationToken cancellationToken)
         {
-            RoomType? roomType = await _roomTypeRepository.GetAsync(predicate: rt => rt.Id == request.Id, cancellationToken: cancellationToken);
+            RoomType? roomType = await _roomTypeRepository.GetAsync(
+                predicate: rt => rt.Id == request.Id,
+
+                // 🌟 İLİŞKİYİ YÜKLÜYORUZ (Hotel adını almak için)
+                include: rt => rt.Include(h => h.Hotel),
+
+                cancellationToken: cancellationToken
+            );
+
             await _roomTypeBusinessRules.RoomTypeShouldExistWhenSelected(roomType);
 
             GetByIdRoomTypeResponse response = _mapper.Map<GetByIdRoomTypeResponse>(roomType);

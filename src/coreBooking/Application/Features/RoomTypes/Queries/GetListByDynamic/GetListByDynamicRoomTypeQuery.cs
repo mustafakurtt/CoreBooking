@@ -1,4 +1,4 @@
-using Application.Features.Hotels.Constants;
+﻿using Application.Features.Hotels.Constants;
 using Application.Features.RoomTypes.Constants;
 using Application.Services.Repositories;
 using AutoMapper;
@@ -20,13 +20,14 @@ public class GetListByDynamicRoomTypeQuery : IRequest<GetListResponse<GetListByD
     public PageRequest PageRequest { get; set; }
     public DynamicQuery Dynamic { get; set; }
 
-    public string[] Roles => new[] { HotelsOperationClaims.Admin, RoomTypesOperationClaims.Read };
-        
+    // Rolleri RoomTypesOperationClaims üzerinden yönetmek daha temizdir
+    public string[] Roles => [Admin, Read];
+
     public bool BypassCache { get; }
-        public string CacheKey => $"GetListByDynamicRoomType-{PageRequest.PageIndex}-{PageRequest.PageSize}";
-        public string CacheGroupKey => "GetRoomTypes";
-        public TimeSpan? SlidingExpiration { get; }
-        
+    public string CacheKey => $"GetListByDynamicRoomType-{PageRequest.PageIndex}-{PageRequest.PageSize}";
+    public string CacheGroupKey => "GetRoomTypes";
+    public TimeSpan? SlidingExpiration { get; }
+
 
     public class GetListByDynamicRoomTypeQueryHandler : IRequestHandler<GetListByDynamicRoomTypeQuery, GetListResponse<GetListByDynamicRoomTypeListItemDto>>
     {
@@ -45,6 +46,10 @@ public class GetListByDynamicRoomTypeQuery : IRequest<GetListResponse<GetListByD
                 dynamic: request.Dynamic,
                 index: request.PageRequest.PageIndex,
                 size: request.PageRequest.PageSize,
+
+                // 🌟 İLİŞKİLERİ YÜKLÜYORUZ (RoomType -> Hotel)
+                include: rt => rt.Include(h => h.Hotel),
+
                 cancellationToken: cancellationToken
             );
 

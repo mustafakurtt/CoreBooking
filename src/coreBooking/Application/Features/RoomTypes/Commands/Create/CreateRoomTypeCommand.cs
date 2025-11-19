@@ -12,17 +12,13 @@ using static Application.Features.RoomTypes.Constants.RoomTypesOperationClaims;
 
 namespace Application.Features.RoomTypes.Commands.Create;
 
-public class CreateRoomTypeCommand : IRequest<CreatedRoomTypeResponse>, ISecuredRequest, ICacheRemoverRequest, ILoggableRequest, ITransactionalRequest
+public class CreateRoomTypeCommand : IRequest<CreatedRoomTypeResponse>, ISecuredRequest, ILoggableRequest, ITransactionalRequest
 {
     public required Guid HotelId { get; set; }
     public required string Name { get; set; }
     public required int Capacity { get; set; }
 
     public string[] Roles => [Admin, Write, RoomTypesOperationClaims.Create];
-
-    public bool BypassCache { get; }
-    public string? CacheKey { get; }
-    public string[]? CacheGroupKey => ["GetRoomTypes"];
 
     public class CreateRoomTypeCommandHandler : IRequestHandler<CreateRoomTypeCommand, CreatedRoomTypeResponse>
     {
@@ -31,7 +27,7 @@ public class CreateRoomTypeCommand : IRequest<CreatedRoomTypeResponse>, ISecured
         private readonly RoomTypeBusinessRules _roomTypeBusinessRules;
 
         public CreateRoomTypeCommandHandler(IMapper mapper, IRoomTypeRepository roomTypeRepository,
-                                         RoomTypeBusinessRules roomTypeBusinessRules)
+            RoomTypeBusinessRules roomTypeBusinessRules)
         {
             _mapper = mapper;
             _roomTypeRepository = roomTypeRepository;
@@ -40,8 +36,10 @@ public class CreateRoomTypeCommand : IRequest<CreatedRoomTypeResponse>, ISecured
 
         public async Task<CreatedRoomTypeResponse> Handle(CreateRoomTypeCommand request, CancellationToken cancellationToken)
         {
-            RoomType roomType = _mapper.Map<RoomType>(request);
+            // KURAL: Otel var mý?
+            await _roomTypeBusinessRules.HotelIdShouldExist(request.HotelId, cancellationToken);
 
+            RoomType roomType = _mapper.Map<RoomType>(request);
             await _roomTypeRepository.AddAsync(roomType);
 
             CreatedRoomTypeResponse response = _mapper.Map<CreatedRoomTypeResponse>(roomType);

@@ -8,6 +8,7 @@ using NArchitecture.Core.Application.Requests;
 using NArchitecture.Core.Application.Responses;
 using NArchitecture.Core.Persistence.Paging;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using static Application.Features.RoomTypes.Constants.RoomTypesOperationClaims;
 
 namespace Application.Features.RoomTypes.Queries.GetList;
@@ -38,7 +39,11 @@ public class GetListRoomTypeQuery : IRequest<GetListResponse<GetListRoomTypeList
         {
             IPaginate<RoomType> roomTypes = await _roomTypeRepository.GetListAsync(
                 index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize, 
+                size: request.PageRequest.PageSize,
+
+                // ÝLÝÞKÝ: Otel bilgisini çek
+                include: rt => rt.Include(h => h.Hotel),
+
                 cancellationToken: cancellationToken
             );
 

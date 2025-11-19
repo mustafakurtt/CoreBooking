@@ -10,11 +10,16 @@ namespace Application.Features.RoomTypes.Rules;
 public class RoomTypeBusinessRules : BaseBusinessRules
 {
     private readonly IRoomTypeRepository _roomTypeRepository;
+    private readonly IHotelRepository _hotelRepository; // EKLENDÝ
     private readonly ILocalizationService _localizationService;
 
-    public RoomTypeBusinessRules(IRoomTypeRepository roomTypeRepository, ILocalizationService localizationService)
+    public RoomTypeBusinessRules(
+        IRoomTypeRepository roomTypeRepository,
+        IHotelRepository hotelRepository, // EKLENDÝ
+        ILocalizationService localizationService)
     {
         _roomTypeRepository = roomTypeRepository;
+        _hotelRepository = hotelRepository;
         _localizationService = localizationService;
     }
 
@@ -24,6 +29,7 @@ public class RoomTypeBusinessRules : BaseBusinessRules
         throw new BusinessException(message);
     }
 
+    // 1. Oda Tipi Varlýk Kontrolü
     public async Task RoomTypeShouldExistWhenSelected(RoomType? roomType)
     {
         if (roomType == null)
@@ -39,4 +45,16 @@ public class RoomTypeBusinessRules : BaseBusinessRules
         );
         await RoomTypeShouldExistWhenSelected(roomType);
     }
-}
+
+    // 2. YENÝ: Otel Varlýk Kontrolü
+    public async Task HotelIdShouldExist(Guid hotelId, CancellationToken cancellationToken)
+    {
+        bool doesExist = await _hotelRepository.AnyAsync(
+            predicate: h => h.Id == hotelId,
+            cancellationToken: cancellationToken
+        );
+
+        if (!doesExist)
+            await throwBusinessException(RoomTypesBusinessMessages.HotelNotExists);
+    }
+}   

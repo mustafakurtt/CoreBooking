@@ -8,4 +8,7 @@ public class GetByIdRoomTypeResponse : IResponse
     public Guid HotelId { get; set; }
     public string Name { get; set; }
     public int Capacity { get; set; }
+
+    // YENÝ: Ýliþkili Veri (Otel Adý)
+    public string HotelName { get; set; }
 }

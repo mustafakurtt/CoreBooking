@@ -8,4 +8,7 @@ public class GetListRoomTypeListItemDto : IDto
     public Guid HotelId { get; set; }
     public string Name { get; set; }
     public int Capacity { get; set; }
+
+    // YENÝ: Otel Adý (Zenginleþtirme)
+    public string HotelName { get; set; }
 }
